@@ -13,7 +13,7 @@ from schemas import AgentResponse
 
 tools = [TavilySearch()]
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
-structured_llm = llm.with_structured_output(AgentResponse)
+# structured_llm = llm.with_structured_output(AgentResponse)
 react_prompt = hub.pull("hwchase17/react")
 
 agent = create_react_agent(
@@ -23,15 +23,17 @@ agent = create_react_agent(
 )
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 extract_output = RunnableLambda(lambda x: x["output"])
-chain = agent_executor | extract_output | structured_llm
+chain = agent_executor
 
 
 def main():
     result = chain.invoke(
-        input={
-            "input": "search for 3 job postings for an software engineer using Go Language in the bay area on linkedin and list their details",
+        {
+            "input": "search for 3 job postings for a software engineer using Go in the bay area and list their details"
         }
     )
+
+    print(result["output"])
     print(result)
 
 
